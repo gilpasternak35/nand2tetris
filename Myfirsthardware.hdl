@@ -1,0 +1,10 @@
+/** This is my first program */
+
+CHIP Myfirsthardware
+{
+	IN a,b;
+	OUT out;
+
+	PARTS:
+	Not(in=a, out=out);
+}
