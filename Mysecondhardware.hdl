@@ -1,0 +1,17 @@
+/** Implementation of a Xor or And gate */
+
+CHIP Mysecondhardware
+{
+
+	IN a,b,c;
+	OUT out;
+	
+	PARTS:
+	Not (in=a, out=nota);
+	Not (in=b, out=notb);
+	And (a=a, b=b, out=aandb);
+	And(a=nota, b=b, out=notaandb);
+	And(a=notb, b=a, out=notbanda);
+	Or (a=notaandb, b=notbanda, out=xor);
+	Or (a=aandb, b=xor, out=out);
+}	
