@@ -14,4 +14,6 @@ CHIP Inc16 {
 
     PARTS:
    // Put you code here:
+   HalfAdder(a=in[0], b=1, carry=carry1);
+   FullAdder(a=in[1], b=1, c=carry1, carry=carry2);
 }
