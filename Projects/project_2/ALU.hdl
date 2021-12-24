@@ -57,6 +57,12 @@ CHIP ALU {
    Mux16(a=potential0, b=potential1, sel=f, out=f1);
    Not16(in=f1, out=notf1);
    Mux16(a=f1, b=notf1, sel=no, out=final);
-   // once established input, choosing function
    // once established output, using 8 way or to figure out if negative / is_0
+   And16(a=final,b=true, out[0..7]=psbits, out[8..15]=ngbits);
+   Or8Way(in=ngbits, out=ngtemp);
+   Or8Way(in=psbits, out=otherbits);
+   Or(a=ngtemp, b=otherbits, out=notzr);
+   Not(in=notzr, out=zr);
+   And(a=ngtemp, b=true, out=ng);
+   And16(a=final, b=true, out=out);
 }
