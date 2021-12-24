@@ -57,12 +57,22 @@ CHIP ALU {
    Mux16(a=potential0, b=potential1, sel=f, out=f1);
    Not16(in=f1, out=notf1);
    Mux16(a=f1, b=notf1, sel=no, out=final);
+
    // once established output, using 8 way or to figure out if negative / is_0
+   // pre-knowledge of 1->many mappings in functional programmings, used identity gates to contain temp results
    And16(a=final,b=true, out[0..7]=psbits, out[8..15]=ngbits);
+   
+   // Checking for a negative valued bit, to be mapped later with identity gate
    Or8Way(in=ngbits, out=ngtemp);
+   
+   // checking for single positive / negative valued bit
    Or8Way(in=psbits, out=otherbits);
    Or(a=ngtemp, b=otherbits, out=notzr);
+
+   //Negating result, no positive/negative valued bits => 0
    Not(in=notzr, out=zr);
+
+   // Identity mappings, pre-knowledge of 1=>many capability
    And(a=ngtemp, b=true, out=ng);
    And16(a=final, b=true, out=out);
 }
