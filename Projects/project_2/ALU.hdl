@@ -43,4 +43,20 @@ CHIP ALU {
 
     PARTS:
    // Put you code here:
+   // Choosing between inputs using mux
+   And16(a=x, b=false, out=xpotentialt1);
+   Mux16(a=x[0..15], b=xpotentialt1, sel=zx, out=xt1);
+   And16(a=y, b=false, out=ypotentialt1);
+   Mux16(a=y[0..15], b=ypotentialt1, sel=zy, out=yt1);   
+   Not16(in=xt1, out=xpotentialt2);
+   Not16(in=yt1, out=ypotentialt2);
+   Mux16(a=xt1, b=xpotentialt2, sel=nx, out=xt2);
+   Mux16(a=yt1, b=ypotentialt2, sel=ny, out=yt2);
+   Add16(a=xt2, b=yt2, out=potential1);
+   And16(a=xt2, b=yt2, out=potential0);
+   Mux16(a=potential0, b=potential1, sel=f, out=f1);
+   Not16(in=f1, out=notf1);
+   Mux16(a=f1, b=notf1, sel=no, out=final);
+   // once established input, choosing function
+   // once established output, using 8 way or to figure out if negative / is_0
 }
