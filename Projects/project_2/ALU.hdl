@@ -1,0 +1,62 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/02/ALU.hdl
+
+/**
+ * The ALU (Arithmetic Logic Unit).
+ * Computes one of the following functions:
+ * x+y, x-y, y-x, 0, 1, -1, x, y, -x, -y, !x, !y,
+ * x+1, y+1, x-1, y-1, x&y, x|y on two 16-bit inputs, 
+ * according to 6 input bits denoted zx,nx,zy,ny,f,no.
+ * In addition, the ALU computes two 1-bit outputs:
+ * if the ALU output == 0, zr is set to 1; otherwise zr is set to 0;
+ * if the ALU output < 0, ng is set to 1; otherwise ng is set to 0.
+ */
+
+// Implementation: the ALU logic manipulates the x and y inputs
+// and operates on the resulting values, as follows:
+// if (zx == 1) set x = 0        // 16-bit constant
+// if (nx == 1) set x = !x       // bitwise not
+// if (zy == 1) set y = 0        // 16-bit constant
+// if (ny == 1) set y = !y       // bitwise not
+// if (f == 1)  set out = x + y  // integer 2's complement addition
+// if (f == 0)  set out = x & y  // bitwise and
+// if (no == 1) set out = !out   // bitwise not
+// if (out == 0) set zr = 1
+// if (out < 0) set ng = 1
+
+CHIP ALU {
+    IN  
+        x[16], y[16],  // 16-bit inputs        
+        zx, // zero the x input?
+        nx, // negate the x input?
+        zy, // zero the y input?
+        ny, // negate the y input?
+        f,  // compute out = x + y (if 1) or x & y (if 0)
+        no; // negate the out output?
+
+    OUT 
+        out[16], // 16-bit output
+        zr, // 1 if (out == 0), 0 otherwise
+        ng; // 1 if (out < 0),  0 otherwise
+
+    PARTS:
+   // Put you code here:
+   // Choosing between inputs using mux
+   And16(a=x, b=false, out=xpotentialt1);
+   Mux16(a=x[0..15], b=xpotentialt1, sel=zx, out=xt1);
+   And16(a=y, b=false, out=ypotentialt1);
+   Mux16(a=y[0..15], b=ypotentialt1, sel=zy, out=yt1);   
+   Not16(in=xt1, out=xpotentialt2);
+   Not16(in=yt1, out=ypotentialt2);
+   Mux16(a=xt1, b=xpotentialt2, sel=nx, out=xt2);
+   Mux16(a=yt1, b=ypotentialt2, sel=ny, out=yt2);
+   Add16(a=xt2, b=yt2, out=potential1);
+   And16(a=xt2, b=yt2, out=potential0);
+   Mux16(a=potential0, b=potential1, sel=f, out=f1);
+   Not16(in=f1, out=notf1);
+   Mux16(a=f1, b=notf1, sel=no, out=final);
+   // once established input, choosing function
+   // once established output, using 8 way or to figure out if negative / is_0
+}
