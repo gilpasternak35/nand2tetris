@@ -17,9 +17,17 @@ CHIP PC {
 
     PARTS:
     // Put your code here:
-    Register(in=in,load=load, out=temp);
-    
+    Mux16(a=curr, b=in, sel=load, out=temp);
+ 
     // If first command was to reset
     Mux16(a=temp, b=false, sel=reset, out=temp2);
-    
+    Not(in=load, out=notload);
+    Not(in=reset, out=notreset);
+    And(a=notreset, b=notload, out=notloadandreset);
+    And(a=inc, b=notloadandreset, out=shouldinc);
+
+    // load = 0 and inc = 0 maintains load, so only if inc=1 changing to increment
+    Inc16(in=temp2, out=incrementedtemp);
+    Mux16(a=temp2, b=incrementedtemp, sel=shouldinc, out=toload);  
+    Register(in=toload, load=true, out=curr, out=out); 
 }
